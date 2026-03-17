@@ -8,36 +8,292 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 
+// ── Çeviriler ─────────────────────────────────────────────
+const TRANSLATIONS = {
+  tr: {
+    appName: "Repertuvar",
+    pieces: "eser",
+    add: "+ Ekle",
+    search: "Ara…",
+    settings: "Ayarlar",
+    done: "Tamam",
+    cancel: "İptal",
+    save: "Kaydet",
+    edit: "Düzenle",
+    delete: "Sil",
+    back: "← Geri",
+    deleteConfirmTitle: "Eseri Sil",
+    deleteConfirmMsg: "kalıcı olarak silinecek.",
+    deleteConfirmBtn: "Sil",
+    noSongs: "Henüz eser yok.\n+ Ekle'ye bas!",
+    noResults: "Sonuç yok.",
+    noContent: "İçerik eklenmemiş.",
+    selectSong: "Bir şarkı seç",
+    chordsAndLyrics: "AKORLAR & SÖZLER",
+    notes: "NOTLAR",
+    transpose: "TRANSPOZ",
+    reset: "↺ sıfırla",
+    newSong: "Yeni Eser",
+    songName: "ESER ADI *",
+    songNamePlaceholder: "Şarkı adı",
+    artist: "SANATÇI",
+    artistPlaceholder: "Sanatçı adı",
+    key: "TON",
+    category: "KATEGORİ",
+    chordsLabel: "AKOR & SÖZLER",
+    chordsHint: "Format: [Am]bu[G]gün — Palette tıkla → [Akor] eklenir",
+    chordsPlaceholder: "[Am]Bu[G]gün gü[F]zel bir [C]gün\n[Em]Se[Am]ni dü[G]şündüm\n\n[Chorus]\n[F]Dün[C]ya dö[G]nü[Am]yor",
+    notesLabel: "NOTLAR",
+    notesPlaceholder: "Capo, tempo, parmak düzeni…",
+    nameRequired: "Eser adı zorunludur.",
+    warning: "Uyarı",
+    theme: "TEMA",
+    themeLight: "Açık",
+    themeDark: "Koyu",
+    themeSepia: "Sepia",
+    fontSize: "YAZI BOYUTU",
+    fontSmall: "Küçük",
+    fontMedium: "Orta",
+    fontLarge: "Büyük",
+    preview: "ÖNİZLEME",
+    language: "DİL",
+    cats: ["Pop","Rock","Klasik","Caz","Halk","R&B","Metal","Folk","Elektronik"],
+  },
+  en: {
+    appName: "Repertoire",
+    pieces: "songs",
+    add: "+ Add",
+    search: "Search…",
+    settings: "Settings",
+    done: "Done",
+    cancel: "Cancel",
+    save: "Save",
+    edit: "Edit",
+    delete: "Delete",
+    back: "← Back",
+    deleteConfirmTitle: "Delete Song",
+    deleteConfirmMsg: "will be permanently deleted.",
+    deleteConfirmBtn: "Delete",
+    noSongs: "No songs yet.\nTap + Add to start!",
+    noResults: "No results.",
+    noContent: "No content added.",
+    selectSong: "Select a song",
+    chordsAndLyrics: "CHORDS & LYRICS",
+    notes: "NOTES",
+    transpose: "TRANSPOSE",
+    reset: "↺ reset",
+    newSong: "New Song",
+    songName: "SONG NAME *",
+    songNamePlaceholder: "Song title",
+    artist: "ARTIST",
+    artistPlaceholder: "Artist name",
+    key: "KEY",
+    category: "CATEGORY",
+    chordsLabel: "CHORDS & LYRICS",
+    chordsHint: "Format: [Am]word [G]next — Tap palette to insert [Chord]",
+    chordsPlaceholder: "[Am]To[G]day is a [F]beau[C]tiful day\n[Em]I[Am]think of [G]you\n\n[Chorus]\n[F]The[C]world [G]keeps [Am]turning",
+    notesLabel: "NOTES",
+    notesPlaceholder: "Capo, tempo, fingering…",
+    nameRequired: "Song name is required.",
+    warning: "Warning",
+    theme: "THEME",
+    themeLight: "Light",
+    themeDark: "Dark",
+    themeSepia: "Sepia",
+    fontSize: "FONT SIZE",
+    fontSmall: "Small",
+    fontMedium: "Medium",
+    fontLarge: "Large",
+    preview: "PREVIEW",
+    language: "LANGUAGE",
+    cats: ["Pop","Rock","Classical","Jazz","Folk","R&B","Metal","Acoustic","Electronic"],
+  },
+  es: {
+    appName: "Repertorio",
+    pieces: "piezas",
+    add: "+ Añadir",
+    search: "Buscar…",
+    settings: "Ajustes",
+    done: "Listo",
+    cancel: "Cancelar",
+    save: "Guardar",
+    edit: "Editar",
+    delete: "Eliminar",
+    back: "← Volver",
+    deleteConfirmTitle: "Eliminar canción",
+    deleteConfirmMsg: "se eliminará permanentemente.",
+    deleteConfirmBtn: "Eliminar",
+    noSongs: "No hay canciones.\n¡Pulsa + Añadir!",
+    noResults: "Sin resultados.",
+    noContent: "Sin contenido.",
+    selectSong: "Selecciona una canción",
+    chordsAndLyrics: "ACORDES Y LETRA",
+    notes: "NOTAS",
+    transpose: "TRANSPONER",
+    reset: "↺ reiniciar",
+    newSong: "Nueva canción",
+    songName: "NOMBRE *",
+    songNamePlaceholder: "Título de la canción",
+    artist: "ARTISTA",
+    artistPlaceholder: "Nombre del artista",
+    key: "TONALIDAD",
+    category: "CATEGORÍA",
+    chordsLabel: "ACORDES Y LETRA",
+    chordsHint: "Formato: [Am]pa[G]labra — Toca paleta para insertar [Acorde]",
+    chordsPlaceholder: "[Am]Hoy es un [G]día hermoso\n[Em]Pienso en [Am]ti\n\n[Coro]\n[F]El mundo [C]sigue [G]girando",
+    notesLabel: "NOTAS",
+    notesPlaceholder: "Cejilla, tempo, digitación…",
+    nameRequired: "El nombre es obligatorio.",
+    warning: "Aviso",
+    theme: "TEMA",
+    themeLight: "Claro",
+    themeDark: "Oscuro",
+    themeSepia: "Sepia",
+    fontSize: "TAMAÑO",
+    fontSmall: "Pequeño",
+    fontMedium: "Medio",
+    fontLarge: "Grande",
+    preview: "VISTA PREVIA",
+    language: "IDIOMA",
+    cats: ["Pop","Rock","Clásica","Jazz","Folk","R&B","Metal","Acústica","Electrónica"],
+  },
+  de: {
+    appName: "Repertoire",
+    pieces: "Stücke",
+    add: "+ Hinzufügen",
+    search: "Suchen…",
+    settings: "Einstellungen",
+    done: "Fertig",
+    cancel: "Abbrechen",
+    save: "Speichern",
+    edit: "Bearbeiten",
+    delete: "Löschen",
+    back: "← Zurück",
+    deleteConfirmTitle: "Lied löschen",
+    deleteConfirmMsg: "wird dauerhaft gelöscht.",
+    deleteConfirmBtn: "Löschen",
+    noSongs: "Noch keine Lieder.\nTippe + Hinzufügen!",
+    noResults: "Keine Ergebnisse.",
+    noContent: "Kein Inhalt.",
+    selectSong: "Lied auswählen",
+    chordsAndLyrics: "AKKORDE & TEXT",
+    notes: "NOTIZEN",
+    transpose: "TRANSPONIEREN",
+    reset: "↺ zurücksetzen",
+    newSong: "Neues Lied",
+    songName: "LIEDNAME *",
+    songNamePlaceholder: "Liedtitel",
+    artist: "KÜNSTLER",
+    artistPlaceholder: "Künstlername",
+    key: "TONART",
+    category: "KATEGORIE",
+    chordsLabel: "AKKORDE & TEXT",
+    chordsHint: "Format: [Am]Wort [G]weiter — Palette antippen für [Akkord]",
+    chordsPlaceholder: "[Am]Heute ist ein [G]schöner Tag\n[Em]Ich denke [Am]an dich\n\n[Refrain]\n[F]Die Welt [C]dreht sich [G]weiter",
+    notesLabel: "NOTIZEN",
+    notesPlaceholder: "Capo, Tempo, Fingersatz…",
+    nameRequired: "Liedname ist erforderlich.",
+    warning: "Hinweis",
+    theme: "DESIGN",
+    themeLight: "Hell",
+    themeDark: "Dunkel",
+    themeSepia: "Sepia",
+    fontSize: "SCHRIFTGRÖSSE",
+    fontSmall: "Klein",
+    fontMedium: "Mittel",
+    fontLarge: "Groß",
+    preview: "VORSCHAU",
+    language: "SPRACHE",
+    cats: ["Pop","Rock","Klassik","Jazz","Folk","R&B","Metal","Akustik","Elektronik"],
+  },
+  fr: {
+    appName: "Répertoire",
+    pieces: "morceaux",
+    add: "+ Ajouter",
+    search: "Rechercher…",
+    settings: "Paramètres",
+    done: "OK",
+    cancel: "Annuler",
+    save: "Enregistrer",
+    edit: "Modifier",
+    delete: "Supprimer",
+    back: "← Retour",
+    deleteConfirmTitle: "Supprimer la chanson",
+    deleteConfirmMsg: "sera supprimée définitivement.",
+    deleteConfirmBtn: "Supprimer",
+    noSongs: "Aucune chanson.\nAppuyez sur + Ajouter !",
+    noResults: "Aucun résultat.",
+    noContent: "Aucun contenu.",
+    selectSong: "Sélectionner une chanson",
+    chordsAndLyrics: "ACCORDS & PAROLES",
+    notes: "NOTES",
+    transpose: "TRANSPOSER",
+    reset: "↺ réinitialiser",
+    newSong: "Nouvelle chanson",
+    songName: "NOM *",
+    songNamePlaceholder: "Titre de la chanson",
+    artist: "ARTISTE",
+    artistPlaceholder: "Nom de l'artiste",
+    key: "TONALITÉ",
+    category: "CATÉGORIE",
+    chordsLabel: "ACCORDS & PAROLES",
+    chordsHint: "Format: [Am]mot [G]suivant — Touchez la palette pour [Accord]",
+    chordsPlaceholder: "[Am]Au[G]jourd'hui [F]c'est beau [C]dehors\n[Em]Je pense [Am]à toi\n\n[Refrain]\n[F]Le monde [C]tourne [G]toujours",
+    notesLabel: "NOTES",
+    notesPlaceholder: "Capo, tempo, doigté…",
+    nameRequired: "Le nom est obligatoire.",
+    warning: "Attention",
+    theme: "THÈME",
+    themeLight: "Clair",
+    themeDark: "Sombre",
+    themeSepia: "Sépia",
+    fontSize: "TAILLE",
+    fontSmall: "Petit",
+    fontMedium: "Moyen",
+    fontLarge: "Grand",
+    preview: "APERÇU",
+    language: "LANGUE",
+    cats: ["Pop","Rock","Classique","Jazz","Folk","R&B","Metal","Acoustique","Électronique"],
+  },
+};
+
+const LANGUAGES = [
+  { code: "tr", label: "Türkçe", flag: "🇹🇷" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "es", label: "Español", flag: "🇪🇸" },
+  { code: "de", label: "Deutsch", flag: "🇩🇪" },
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+];
+
 // ── Ayarlar context ───────────────────────────────────────
 const SettingsContext = createContext(null);
 const useSettings = () => useContext(SettingsContext);
 
 const FONT_OPTIONS = [
-  { label: "Küçük", base: 13 },
-  { label: "Orta",  base: 15 },
-  { label: "Büyük", base: 18 },
+  { base: 13 },
+  { base: 15 },
+  { base: 18 },
 ];
 
 const THEME_OPTIONS = [
-  { label: "Açık",  bg: "#FAFAF9", card: "#FFFFFF", bgSec: "#F1EFE8", text: "#2C2C2A", textSub: "#888780", purple: "#534AB7", purpleBg: "#EEEDFE", border: "#D3D1C7", borderLight: "#E8E6DF", statusBar: "dark-content" },
-  { label: "Koyu",  bg: "#1C1C1E", card: "#2C2C2E", bgSec: "#3A3A3C", text: "#F2F2F7", textSub: "#8E8E93", purple: "#A39EF5", purpleBg: "#2C2A4A", border: "#48484A", borderLight: "#3A3A3C", statusBar: "light-content" },
-  { label: "Sepia", bg: "#F5F0E8", card: "#FFF9F0", bgSec: "#EDE5D8", text: "#3B2F1E", textSub: "#8B7355", purple: "#7B5EA7", purpleBg: "#EDE5F5", border: "#C8B89A", borderLight: "#DDD0C0", statusBar: "dark-content" },
+  { bg: "#FAFAF9", card: "#FFFFFF", bgSec: "#F1EFE8", text: "#2C2C2A", textSub: "#888780", purple: "#534AB7", purpleBg: "#EEEDFE", border: "#D3D1C7", borderLight: "#E8E6DF", statusBar: "dark-content" },
+  { bg: "#1C1C1E", card: "#2C2C2E", bgSec: "#3A3A3C", text: "#F2F2F7", textSub: "#8E8E93", purple: "#A39EF5", purpleBg: "#2C2A4A", border: "#48484A", borderLight: "#3A3A3C", statusBar: "light-content" },
+  { bg: "#F5F0E8", card: "#FFF9F0", bgSec: "#EDE5D8", text: "#3B2F1E", textSub: "#8B7355", purple: "#7B5EA7", purpleBg: "#EDE5F5", border: "#C8B89A", borderLight: "#DDD0C0", statusBar: "dark-content" },
 ];
 
-const STORAGE_KEY   = "repertuvar:v2";
-const SETTINGS_KEY  = "repertuvar:settings";
-const NOTES         = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-const FLAT_MAP      = { Db:"C#", Eb:"D#", Gb:"F#", Ab:"G#", Bb:"A#" };
+const STORAGE_KEY  = "repertuvar:v2";
+const SETTINGS_KEY = "repertuvar:settings";
+const NOTES        = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const FLAT_MAP     = { Db:"C#", Eb:"D#", Gb:"F#", Ab:"G#", Bb:"A#" };
 const CHORD_PALETTE = ["Am","Em","Dm","Gm","C","G","D","E","A","F","Bm","B","E7","A7","D7","G7","Cadd9","Gsus4","Fmaj7","Cmaj7"];
-const CATS          = ["Pop","Rock","Klasik","Caz","Halk","R&B","Metal","Folk","Elektronik"];
-const ALL_KEYS      = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const ALL_KEYS     = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 
 // ── Transpoz ──────────────────────────────────────────────
 function noteIdx(n) { return NOTES.indexOf(FLAT_MAP[n] || n); }
 function transposeNote(n, st) { const i = noteIdx(n); return i === -1 ? n : NOTES[((i+st)%12+12)%12]; }
 function transposeChord(ch, st) { return st === 0 ? ch : ch.replace(/([A-G][#b]?)/g, m => transposeNote(m, st)); }
 
-// ── ChordPro parser ───────────────────────────────────────
+// ── ChordPro ──────────────────────────────────────────────
 function parseLine(line, st) {
   const pairs = [], re = /\[([^\]]+)\]([^\[]*)/g;
   let match, last = 0;
@@ -85,18 +341,12 @@ async function saveSongs(songs) {
   try { await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(songs)); } catch {}
 }
 
-// ── Topbar — safe area farkında ───────────────────────────
+// ── Topbar ────────────────────────────────────────────────
 function Topbar({ left, center, right }) {
   const { theme } = useSettings();
   const insets = useSafeAreaInsets();
   return (
-    <View style={[st.topbarWrap, {
-      backgroundColor: theme.bg,
-      borderBottomColor: theme.borderLight,
-      paddingTop: insets.top + 8,   // ← bildirim çubuğunun tam altından başlar
-      paddingBottom: 10,
-      paddingHorizontal: 16,
-    }]}>
+    <View style={[st.topbarWrap, { backgroundColor: theme.bg, borderBottomColor: theme.borderLight, paddingTop: insets.top + 8, paddingBottom: 10, paddingHorizontal: 16 }]}>
       <View style={st.topbarRow}>
         <View style={{ flex: 1, alignItems: "flex-start" }}>{left}</View>
         {center ? <View style={{ flex: 2, alignItems: "center" }}>{center}</View> : null}
@@ -108,58 +358,84 @@ function Topbar({ left, center, right }) {
 
 // ── Ayarlar Modal ─────────────────────────────────────────
 function SettingsModal({ visible, onClose }) {
-  const { theme, themeIdx, setThemeIdx, fontSize, fontIdx, setFontIdx } = useSettings();
+  const { theme, themeIdx, setThemeIdx, fontSize, fontIdx, setFontIdx, langCode, setLangCode, t } = useSettings();
   const insets = useSafeAreaInsets();
+  const themeLabels = [t.themeLight, t.themeDark, t.themeSepia];
+  const fontLabels  = [t.fontSmall, t.fontMedium, t.fontLarge];
+
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: theme.bg }}>
-        <View style={[st.topbarWrap, {
-          backgroundColor: theme.bg, borderBottomColor: theme.borderLight,
-          paddingTop: insets.top + 8, paddingBottom: 10, paddingHorizontal: 16,
-        }]}>
+        <View style={[st.topbarWrap, { backgroundColor: theme.bg, borderBottomColor: theme.borderLight, paddingTop: insets.top + 8, paddingBottom: 10, paddingHorizontal: 16 }]}>
           <View style={st.topbarRow}>
             <View style={{ flex: 1 }} />
             <View style={{ flex: 2, alignItems: "center" }}>
-              <Text style={[st.topbarTitle, { color: theme.text }]}>Ayarlar</Text>
+              <Text style={[st.topbarTitle, { color: theme.text }]}>{t.settings}</Text>
             </View>
             <View style={{ flex: 1, alignItems: "flex-end" }}>
               <TouchableOpacity onPress={onClose}>
-                <Text style={{ color: theme.purple, fontSize: 16 }}>Tamam</Text>
+                <Text style={{ color: theme.purple, fontSize: 16 }}>{t.done}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
+
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom + 30, gap: 28 }}>
+
+          {/* Tema */}
           <View>
-            <Text style={[st.settingsSection, { color: theme.textSub }]}>TEMA</Text>
+            <Text style={[st.settingsSection, { color: theme.textSub }]}>{t.theme}</Text>
             <View style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
-              {THEME_OPTIONS.map((t, i) => (
+              {THEME_OPTIONS.map((th, i) => (
                 <TouchableOpacity key={i} onPress={() => setThemeIdx(i)}
-                  style={[st.themeCard, { backgroundColor: t.card, borderColor: themeIdx === i ? t.purple : t.border, borderWidth: themeIdx === i ? 2 : .5 }]}>
+                  style={[st.themeCard, { backgroundColor: th.card, borderColor: themeIdx === i ? th.purple : th.border, borderWidth: themeIdx === i ? 2 : .5 }]}>
                   <View style={{ flexDirection: "row", gap: 4, marginBottom: 8 }}>
-                    {[t.purple, t.bg, t.bgSec].map((col, j) => (
+                    {[th.purple, th.bg, th.bgSec].map((col, j) => (
                       <View key={j} style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: col }} />
                     ))}
                   </View>
-                  <Text style={{ fontSize: 13, fontWeight: "500", color: t.text }}>{t.label}</Text>
+                  <Text style={{ fontSize: 13, fontWeight: "500", color: th.text }}>{themeLabels[i]}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
+
+          {/* Yazı boyutu */}
           <View>
-            <Text style={[st.settingsSection, { color: theme.textSub }]}>YAZI BOYUTU</Text>
+            <Text style={[st.settingsSection, { color: theme.textSub }]}>{t.fontSize}</Text>
             <View style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
               {FONT_OPTIONS.map((f, i) => (
                 <TouchableOpacity key={i} onPress={() => setFontIdx(i)}
                   style={[st.fontCard, { backgroundColor: theme.card, borderColor: fontIdx === i ? theme.purple : theme.border, borderWidth: fontIdx === i ? 2 : .5 }]}>
                   <Text style={{ fontSize: f.base + 2, color: theme.text, fontWeight: "500" }}>Aa</Text>
-                  <Text style={{ fontSize: 12, color: theme.textSub, marginTop: 4 }}>{f.label}</Text>
+                  <Text style={{ fontSize: 12, color: theme.textSub, marginTop: 4 }}>{fontLabels[i]}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
+
+          {/* Dil */}
+          <View>
+            <Text style={[st.settingsSection, { color: theme.textSub }]}>{t.language}</Text>
+            <View style={{ marginTop: 10, gap: 8 }}>
+              {LANGUAGES.map(lang => (
+                <TouchableOpacity key={lang.code} onPress={() => setLangCode(lang.code)}
+                  style={[st.langRow, { backgroundColor: theme.card, borderColor: langCode === lang.code ? theme.purple : theme.border, borderWidth: langCode === lang.code ? 2 : .5 }]}>
+                  <Text style={{ fontSize: 22 }}>{lang.flag}</Text>
+                  <Text style={{ fontSize: 15, color: theme.text, flex: 1, marginLeft: 12 }}>{lang.label}</Text>
+                  {langCode === lang.code && (
+                    <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: theme.purple, alignItems: "center", justifyContent: "center" }}>
+                      <Text style={{ color: "#fff", fontSize: 12, fontWeight: "bold" }}>✓</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Önizleme */}
           <View style={[st.settingsPreview, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={[st.sectionLabel, { color: theme.textSub, fontSize: fontSize - 4, marginTop: 0, marginBottom: 10 }]}>ÖNİZLEME</Text>
+            <Text style={[st.sectionLabel, { color: theme.textSub, fontSize: fontSize - 4, marginTop: 0, marginBottom: 10 }]}>{t.preview}</Text>
             <View style={st.chordRow}>
               {[{ chord:"Am", syl:"Bu" },{ chord:"G", syl:"gün" },{ chord:"F", syl:"gü" },{ chord:"C", syl:"zel" }].map((p, j) => (
                 <View key={j} style={st.chordPair}>
@@ -169,6 +445,7 @@ function SettingsModal({ visible, onClose }) {
               ))}
             </View>
           </View>
+
         </ScrollView>
       </View>
     </Modal>
@@ -177,7 +454,7 @@ function SettingsModal({ visible, onClose }) {
 
 // ── Form Modal ────────────────────────────────────────────
 function SongForm({ visible, existing, onClose, onSave }) {
-  const { theme } = useSettings();
+  const { theme, t } = useSettings();
   const insets = useSafeAreaInsets();
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
@@ -204,7 +481,7 @@ function SongForm({ visible, existing, onClose, onSave }) {
   };
 
   const save = async () => {
-    if (!title.trim()) { Alert.alert("Uyarı", "Eser adı zorunludur."); return; }
+    if (!title.trim()) { Alert.alert(t.warning, t.nameRequired); return; }
     setSaving(true);
     const all = await loadSongs(), now = new Date().toISOString();
     const data = { title: title.trim(), artist: artist.trim(), key, category, chords, notes: notes.trim() };
@@ -227,20 +504,20 @@ function SongForm({ visible, existing, onClose, onSave }) {
       <View style={{ flex: 1, backgroundColor: theme.bg }}>
         <View style={[st.topbarWrap, { backgroundColor: theme.bg, borderBottomColor: theme.borderLight, paddingTop: insets.top + 8, paddingBottom: 10, paddingHorizontal: 16 }]}>
           <View style={st.topbarRow}>
-            <TouchableOpacity onPress={onClose}><Text style={{ color: theme.purple, fontSize: 16 }}>İptal</Text></TouchableOpacity>
-            <Text style={[st.topbarTitle, { color: theme.text }]}>{existing ? "Düzenle" : "Yeni Eser"}</Text>
+            <TouchableOpacity onPress={onClose}><Text style={{ color: theme.purple, fontSize: 16 }}>{t.cancel}</Text></TouchableOpacity>
+            <Text style={[st.topbarTitle, { color: theme.text }]}>{existing ? t.edit : t.newSong}</Text>
             <TouchableOpacity onPress={save} disabled={saving} style={[st.saveBtn, { backgroundColor: theme.purple }]}>
-              {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.saveBtnText}>Kaydet</Text>}
+              {saving ? <ActivityIndicator color="#fff" size="small" /> : <Text style={st.saveBtnText}>{t.save}</Text>}
             </TouchableOpacity>
           </View>
         </View>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
           <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 40 }} keyboardShouldPersistTaps="handled">
-            <Text style={lbl}>ESER ADI *</Text>
-            <TextInput style={[...inp, { marginBottom: 16 }]} value={title} onChangeText={setTitle} placeholder="Şarkı adı" placeholderTextColor={theme.textSub} />
-            <Text style={lbl}>SANATÇI</Text>
-            <TextInput style={[...inp, { marginBottom: 16 }]} value={artist} onChangeText={setArtist} placeholder="Sanatçı adı" placeholderTextColor={theme.textSub} />
-            <Text style={lbl}>TON</Text>
+            <Text style={lbl}>{t.songName}</Text>
+            <TextInput style={[...inp, { marginBottom: 16 }]} value={title} onChangeText={setTitle} placeholder={t.songNamePlaceholder} placeholderTextColor={theme.textSub} />
+            <Text style={lbl}>{t.artist}</Text>
+            <TextInput style={[...inp, { marginBottom: 16 }]} value={artist} onChangeText={setArtist} placeholder={t.artistPlaceholder} placeholderTextColor={theme.textSub} />
+            <Text style={lbl}>{t.key}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }} contentContainerStyle={{ gap: 6 }}>
               {ALL_KEYS.map(k => (
                 <TouchableOpacity key={k} onPress={() => setKey(key === k ? "" : k)}
@@ -249,17 +526,17 @@ function SongForm({ visible, existing, onClose, onSave }) {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <Text style={lbl}>KATEGORİ</Text>
+            <Text style={lbl}>{t.category}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }} contentContainerStyle={{ gap: 6 }}>
-              {CATS.map(c => (
+              {t.cats.map(c => (
                 <TouchableOpacity key={c} onPress={() => setCategory(category === c ? "" : c)}
                   style={[st.chip, { borderColor: theme.border, backgroundColor: theme.card }, category === c && { backgroundColor: theme.purpleBg, borderColor: theme.purple }]}>
                   <Text style={[st.chipText, { color: theme.textSub }, category === c && { color: theme.purple, fontWeight: "500" }]}>{c}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <Text style={lbl}>AKOR & SÖZLER</Text>
-            <Text style={{ fontSize: 12, color: theme.textSub, marginBottom: 8, lineHeight: 17 }}>Format: [Am]bu[G]gün — Palette tıkla → [Akor] eklenir</Text>
+            <Text style={lbl}>{t.chordsLabel}</Text>
+            <Text style={{ fontSize: 12, color: theme.textSub, marginBottom: 8, lineHeight: 17 }}>{t.chordsHint}</Text>
             <View style={st.paletteWrap}>
               {CHORD_PALETTE.map(c => (
                 <TouchableOpacity key={c} onPress={() => insertChord(c)} style={[st.paletteBtn, { borderColor: theme.border, backgroundColor: theme.bgSec }]}>
@@ -269,11 +546,11 @@ function SongForm({ visible, existing, onClose, onSave }) {
             </View>
             <TextInput style={[...inp, st.bigArea]} value={chords} onChangeText={setChords}
               onSelectionChange={e => setCursor(e.nativeEvent.selection.start)}
-              placeholder={"[Am]Bu[G]gün gü[F]zel bir [C]gün\n[Em]Se[Am]ni dü[G]şündüm\n\n[Chorus]\n[F]Dün[C]ya dö[G]nü[Am]yor"}
-              multiline numberOfLines={8} placeholderTextColor={theme.textSub} textAlignVertical="top" />
-            <Text style={[lbl, { marginTop: 16 }]}>NOTLAR</Text>
+              placeholder={t.chordsPlaceholder} multiline numberOfLines={8}
+              placeholderTextColor={theme.textSub} textAlignVertical="top" />
+            <Text style={[lbl, { marginTop: 16 }]}>{t.notesLabel}</Text>
             <TextInput style={[...inp, { minHeight: 80, paddingTop: 12 }]} value={notes} onChangeText={setNotes}
-              placeholder="Capo, tempo, parmak düzeni…" multiline numberOfLines={3}
+              placeholder={t.notesPlaceholder} multiline numberOfLines={3}
               placeholderTextColor={theme.textSub} textAlignVertical="top" />
           </ScrollView>
         </KeyboardAvoidingView>
@@ -284,31 +561,30 @@ function SongForm({ visible, existing, onClose, onSave }) {
 
 // ── Liste ekranı ──────────────────────────────────────────
 function ListScreen({ songs, selectedId, onSelect, onAdd, search, onSearch, onSettings }) {
-  const { theme, fontSize } = useSettings();
+  const { theme, fontSize, t } = useSettings();
   const insets = useSafeAreaInsets();
-
   const filtered = songs
     .filter(s => !search || s.title.toLowerCase().includes(search.toLowerCase()) || (s.artist||"").toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => a.title.localeCompare(b.title, "tr"));
+    .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.bg }}>
       <Topbar
-        left={<Text style={[st.topbarTitle, { color: theme.text }]}>Repertuvar</Text>}
+        left={<Text style={[st.topbarTitle, { color: theme.text }]}>{t.appName}</Text>}
         right={
           <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-            <Text style={{ fontSize: 13, color: theme.textSub }}>{songs.length} eser</Text>
+            <Text style={{ fontSize: 13, color: theme.textSub }}>{songs.length} {t.pieces}</Text>
             <TouchableOpacity onPress={onSettings} style={[st.iconBtn, { borderColor: theme.border }]}>
               <Text style={{ fontSize: 15 }}>⚙️</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onAdd} style={[st.addBtn, { backgroundColor: theme.purple }]}>
-              <Text style={st.addBtnText}>+ Ekle</Text>
+              <Text style={st.addBtnText}>{t.add}</Text>
             </TouchableOpacity>
           </View>
         }
       />
       <TextInput style={[st.searchInp, { borderColor: theme.border, backgroundColor: theme.card, color: theme.text, marginHorizontal: 12, marginTop: 12, marginBottom: 4 }]}
-        placeholder="Ara…" value={search} onChangeText={onSearch}
+        placeholder={t.search} value={search} onChangeText={onSearch}
         placeholderTextColor={theme.textSub} clearButtonMode="while-editing" />
       <FlatList
         data={filtered}
@@ -319,7 +595,7 @@ function ListScreen({ songs, selectedId, onSelect, onAdd, search, onSearch, onSe
           <View style={{ alignItems: "center", paddingTop: 80 }}>
             <Text style={{ fontSize: 40, marginBottom: 10 }}>🎵</Text>
             <Text style={{ color: theme.textSub, fontSize: 14, textAlign: "center" }}>
-              {songs.length === 0 ? "Henüz eser yok.\n+ Ekle'ye bas!" : "Sonuç yok."}
+              {songs.length === 0 ? t.noSongs : t.noResults}
             </Text>
           </View>
         }
@@ -344,7 +620,7 @@ function ListScreen({ songs, selectedId, onSelect, onAdd, search, onSearch, onSe
 
 // ── Detay ekranı ──────────────────────────────────────────
 function DetailScreen({ song, onBack, onEdit, onDelete }) {
-  const { theme, fontSize } = useSettings();
+  const { theme, fontSize, t } = useSettings();
   const insets = useSafeAreaInsets();
   const [transpose, setTranspose] = useState(0);
   useEffect(() => { setTranspose(0); }, [song?.id]);
@@ -354,18 +630,14 @@ function DetailScreen({ song, onBack, onEdit, onDelete }) {
   return (
     <View style={{ flex: 1, backgroundColor: theme.bg }}>
       <Topbar
-        left={
-          <TouchableOpacity onPress={onBack}>
-            <Text style={{ color: theme.purple, fontSize: 16 }}>← Geri</Text>
-          </TouchableOpacity>
-        }
+        left={<TouchableOpacity onPress={onBack}><Text style={{ color: theme.purple, fontSize: 16 }}>{t.back}</Text></TouchableOpacity>}
         right={
           <View style={{ flexDirection: "row", gap: 8 }}>
             <TouchableOpacity onPress={onEdit} style={[st.btnSm, { borderColor: theme.border }]}>
-              <Text style={[st.btnSmText, { color: theme.text, fontSize: fontSize - 2 }]}>Düzenle</Text>
+              <Text style={[st.btnSmText, { color: theme.text, fontSize: fontSize - 2 }]}>{t.edit}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onDelete} style={[st.btnSm, { borderColor: "#E24B4A" }]}>
-              <Text style={[st.btnSmText, { color: "#E24B4A", fontSize: fontSize - 2 }]}>Sil</Text>
+              <Text style={[st.btnSmText, { color: "#E24B4A", fontSize: fontSize - 2 }]}>{t.delete}</Text>
             </TouchableOpacity>
           </View>
         }
@@ -378,35 +650,35 @@ function DetailScreen({ song, onBack, onEdit, onDelete }) {
           {song.category ? <View style={[st.tagGray, { backgroundColor: theme.bgSec, paddingHorizontal: 10, paddingVertical: 4 }]}><Text style={[st.tagGrayText, { color: theme.textSub, fontSize: fontSize - 1 }]}>{song.category}</Text></View> : null}
         </View>
         <View style={[st.transposeBar, { backgroundColor: theme.bgSec }]}>
-          <Text style={[st.transLabel, { color: theme.textSub }]}>TRANSPOZ</Text>
+          <Text style={[st.transLabel, { color: theme.textSub }]}>{t.transpose}</Text>
           <TouchableOpacity onPress={() => setTranspose(t => t - 1)} style={[st.transBtn, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <Text style={[st.transBtnText, { color: theme.text }]}>−</Text>
           </TouchableOpacity>
           <Text style={[st.transVal, { color: theme.text }]}>{tLabel}</Text>
-          <TouchableOpacity onPress={() => setTranspose(t => t + 1)} style={[st.transBtn, { borderColor: theme.border, backgroundColor: theme.card }]}>
+          <TouchableOpacity onPress={() => setTranspose(tr => tr + 1)} style={[st.transBtn, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <Text style={[st.transBtnText, { color: theme.text }]}>+</Text>
           </TouchableOpacity>
           {transpose !== 0 && (
             <TouchableOpacity onPress={() => setTranspose(0)} style={[st.transBtn, { borderColor: theme.border, backgroundColor: theme.card, paddingHorizontal: 10, width: "auto" }]}>
-              <Text style={{ fontSize: 12, color: theme.textSub }}>↺ sıfırla</Text>
+              <Text style={{ fontSize: 12, color: theme.textSub }}>{t.reset}</Text>
             </TouchableOpacity>
           )}
         </View>
         {song.chords ? (
           <>
-            <Text style={[st.sectionLabel, { color: theme.textSub, fontSize: fontSize - 4, marginTop: 20, marginBottom: 10 }]}>AKORLAR & SÖZLER</Text>
+            <Text style={[st.sectionLabel, { color: theme.textSub, fontSize: fontSize - 4, marginTop: 20, marginBottom: 10 }]}>{t.chordsAndLyrics}</Text>
             <ChordProView text={song.chords} semitones={transpose} />
           </>
         ) : null}
         {song.notes ? (
           <>
-            <Text style={[st.sectionLabel, { color: theme.textSub, fontSize: fontSize - 4 }]}>NOTLAR</Text>
+            <Text style={[st.sectionLabel, { color: theme.textSub, fontSize: fontSize - 4 }]}>{t.notes}</Text>
             <View style={[st.notesBox, { backgroundColor: theme.bgSec }]}>
               <Text style={{ fontSize: fontSize - 1, color: theme.text, lineHeight: 22 }}>{song.notes}</Text>
             </View>
           </>
         ) : null}
-        {!song.chords && !song.notes ? <Text style={{ color: theme.textSub, fontSize }}>İçerik eklenmemiş.</Text> : null}
+        {!song.chords && !song.notes ? <Text style={{ color: theme.textSub, fontSize }}>{t.noContent}</Text> : null}
       </ScrollView>
     </View>
   );
@@ -416,7 +688,7 @@ function DetailScreen({ song, onBack, onEdit, onDelete }) {
 function Main() {
   const { width, height } = useWindowDimensions();
   const isLandscapeTablet = width >= 768 && width > height;
-  const { theme } = useSettings();
+  const { theme, t } = useSettings();
   const insets = useSafeAreaInsets();
 
   const [songs, setSongs] = useState([]);
@@ -427,14 +699,14 @@ function Main() {
   const [editSong, setEditSong] = useState(null);
   const [settingsVisible, setSettingsVisible] = useState(false);
 
-  useEffect(() => { loadSongs().then(data => { setSongs(data); }); }, []);
+  useEffect(() => { loadSongs().then(setSongs); }, []);
 
   const handleSelect = (song) => { setSel(song); if (!isLandscapeTablet) setScreen("detail"); };
   const handleSave   = (saved, updated) => { setSongs(updated); setSel(saved); setFormVisible(false); if (!isLandscapeTablet) setScreen("detail"); };
   const handleDelete = () => {
-    Alert.alert("Sil", `"${sel?.title}" silinsin mi?`, [
-      { text: "İptal", style: "cancel" },
-      { text: "Sil", style: "destructive", onPress: async () => {
+    Alert.alert(t.deleteConfirmTitle, `"${sel?.title}" ${t.deleteConfirmMsg}`, [
+      { text: t.cancel, style: "cancel" },
+      { text: t.deleteConfirmBtn, style: "destructive", onPress: async () => {
         const updated = songs.filter(s => s.id !== sel.id);
         await saveSongs(updated); setSongs(updated); setSel(null); setScreen("list");
       }},
@@ -443,11 +715,7 @@ function Main() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.bg }}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle={theme.statusBar}
-      />
+      <StatusBar translucent backgroundColor="transparent" barStyle={theme.statusBar} />
       {isLandscapeTablet ? (
         <View style={{ flex: 1, flexDirection: "row" }}>
           <View style={{ width: 300, borderRightWidth: .5, borderRightColor: theme.borderLight }}>
@@ -460,7 +728,7 @@ function Main() {
               ? <DetailScreen song={sel} onBack={() => setSel(null)} onEdit={() => { setEditSong(sel); setFormVisible(true); }} onDelete={handleDelete} />
               : <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                   <Text style={{ fontSize: 48, opacity: .2 }}>♪</Text>
-                  <Text style={{ color: theme.textSub, fontSize: 14, marginTop: 8 }}>Bir şarkı seç</Text>
+                  <Text style={{ color: theme.textSub, fontSize: 14, marginTop: 8 }}>{t.selectSong}</Text>
                 </View>}
           </View>
         </View>
@@ -481,20 +749,24 @@ function Main() {
 export default function App() {
   const [themeIdx, setThemeIdx] = useState(0);
   const [fontIdx, setFontIdx]   = useState(1);
+  const [langCode, setLangCode] = useState("tr");
 
   useEffect(() => {
     AsyncStorage.getItem(SETTINGS_KEY).then(r => {
-      if (r) { const { ti, fi } = JSON.parse(r); setThemeIdx(ti ?? 0); setFontIdx(fi ?? 1); }
+      if (r) { const { ti, fi, lc } = JSON.parse(r); setThemeIdx(ti ?? 0); setFontIdx(fi ?? 1); setLangCode(lc ?? "tr"); }
     }).catch(() => {});
   }, []);
 
-  const persist = (ti, fi) => { try { AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify({ ti, fi })); } catch {} };
-  const handleTheme = (i) => { setThemeIdx(i); persist(i, fontIdx); };
-  const handleFont  = (i) => { setFontIdx(i);  persist(themeIdx, i); };
+  const persist = (ti, fi, lc) => { try { AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify({ ti, fi, lc })); } catch {} };
+  const handleTheme = (i) => { setThemeIdx(i); persist(i, fontIdx, langCode); };
+  const handleFont  = (i) => { setFontIdx(i);  persist(themeIdx, i, langCode); };
+  const handleLang  = (lc) => { setLangCode(lc); persist(themeIdx, fontIdx, lc); };
 
   const ctx = {
     theme: THEME_OPTIONS[themeIdx], themeIdx, setThemeIdx: handleTheme,
     fontSize: FONT_OPTIONS[fontIdx].base, fontIdx, setFontIdx: handleFont,
+    langCode, setLangCode: handleLang,
+    t: TRANSLATIONS[langCode] || TRANSLATIONS.tr,
   };
 
   return (
@@ -548,4 +820,5 @@ const st = StyleSheet.create({
   themeCard: { flex: 1, borderRadius: 12, padding: 12 },
   fontCard: { flex: 1, borderRadius: 12, padding: 12, alignItems: "center", justifyContent: "center", minHeight: 70 },
   settingsPreview: { borderRadius: 12, borderWidth: .5, padding: 14 },
+  langRow: { flexDirection: "row", alignItems: "center", borderRadius: 12, padding: 14, borderWidth: .5 },
 });
