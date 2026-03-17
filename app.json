@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Repertuvar",
+    "slug": "repertuvar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAFAF9"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.repertuvar.app",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FAFAF9"
+      },
+      "package": "com.repertuvar.app",
+      "versionCode": 1,
+      "permissions": []
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [],
+    "extra": {
+      "eas": {
+        "projectId": "fe361ebc-4fa0-4e09-a28d-2c50fd6ab596"
+      }
+    }
+  }
+}
